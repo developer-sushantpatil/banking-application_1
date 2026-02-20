@@ -1,3 +1,5 @@
-# Netlify redirects for SPA
-/*    /index.html   200
+# API routing - must come first
 /api/*  /.netlify/functions/api  200
+
+# SPA fallback
+/*    /index.html   200
