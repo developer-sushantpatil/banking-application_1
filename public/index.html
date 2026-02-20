@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kodbank - Welcome</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-wrapper landing-wrapper">
+            <div class="header">
+                <h1>🏦 Kodbank</h1>
+                <p>Your Trusted Banking Partner</p>
+            </div>
+
+            <div class="landing-buttons">
+                <a href="/login" class="btn-landing btn-login">Login</a>
+                <a href="/register" class="btn-landing btn-register">Register</a>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">🔒</span>
+                    <p>Secure Banking</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">💰</span>
+                    <p>Instant Balance</p>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">⚡</span>
+                    <p>Fast Transactions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .landing-wrapper {
+            text-align: center;
+        }
+
+        .landing-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .btn-landing {
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-register {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-register:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(245, 87, 108, 0.5);
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .feature {
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 10px;
+            animation: bounce 2s ease infinite;
+        }
+
+        .feature p {
+            color: #666;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .landing-buttons {
+                flex-direction: column;
+            }
+
+            .btn-landing {
+                width: 100%;
+            }
+        }
+    </style>
+</body>
+
+</html>

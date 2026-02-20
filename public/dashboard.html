@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kodbank - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>🏦 Kodbank</h1>
+            <div class="user-info">
+                <span id="welcomeUser">Welcome</span>
+                <button onclick="logout()" class="btn-logout">Logout</button>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="balance-card">
+                <h2>Your Account</h2>
+                <button id="checkBalanceBtn" class="btn-check-balance">
+                    💰 Check Balance
+                </button>
+
+                <div id="balanceDisplay" class="balance-display" style="display: none;">
+                    <div class="confetti-container" id="confetti"></div>
+                    <p class="balance-label">Your balance is:</p>
+                    <p class="balance-amount">$<span id="balanceValue">0.00</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        // Check if user is logged in on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/balance', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    // Token invalid or expired, redirect to login
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                window.location.href = '/login';
+            }
+        });
+
+        // Check Balance button click
+        document.getElementById('checkBalanceBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/balance', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show balance with animation
+                    document.getElementById('balanceValue').textContent = data.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    document.getElementById('balanceDisplay').style.display = 'block';
+                    document.getElementById('checkBalanceBtn').style.display = 'none';
+
+                    // Trigger confetti
+                    createConfetti();
+
+                    showMessage('Balance fetched successfully!', 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                    if (data.message.includes('expired') || data.message.includes('invalid')) {
+                        setTimeout(() => {
+                            window.location.href = '/login';
+                        }, 2000);
+                    }
+                }
+            } catch (error) {
+                showMessage('Failed to fetch balance. Please try again.', 'error');
+            }
+        });
+
+        // Logout function
+        async function logout() {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+
+            window.location.href = '/login';
+        }
+
+        // Show message function
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = 'message ' + type;
+            messageEl.style.display = 'block';
+
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // Confetti animation
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe', '#fd79a8', '#00b894'];
+
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.setProperty('--x', Math.random() * 100 + 'vw');
+                confetti.style.setProperty('--y', Math.random() * 100 + 'vh');
+                confetti.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
+                confetti.style.setProperty('--delay', Math.random() * 2 + 's');
+                confetti.style.setProperty('--duration', Math.random() * 2 + 2 + 's');
+                confettiContainer.appendChild(confetti);
+            }
+
+            // Remove confetti after animation
+            setTimeout(() => {
+                confettiContainer.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+
+</html>
