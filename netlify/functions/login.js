@@ -2,17 +2,34 @@ const { Pool } = require('pg');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Database configuration
-const pool = new Pool({
-    host: process.env.DB_HOST || 'db.otviepliqleobakgqyda.supabase.co',
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'Sushantkod114',
-    database: process.env.DB_NAME || 'kodbank',
-    port: parseInt(process.env.DB_PORT) || 5432,
-    ssl: { rejectUnauthorized: false }
-});
+// Parse DATABASE_URL if provided
+let pool;
+const dbUrl = process.env.DATABASE_URL;
 
-const JWT_SECRET = process.env.JWT_SECRET || 'kodbank_super_secret_key_2024_secure';
+if (dbUrl) {
+    const match = dbUrl.match(/postgresql:\/\/([^:]+):([^@]+)@([^:]+):(\d+)\/(\d+)/);
+    if (match) {
+        pool = new Pool({
+            host: match[3],
+            user: match[1],
+            password: match[2],
+            port: parseInt(match[4]),
+            database: 'kodbank',
+            ssl: { rejectUnauthorized: false }
+        });
+    }
+} else {
+    pool = new Pool({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME || 'kodbank',
+        port: parseInt(process.env.DB_PORT) || 5432,
+        ssl: { rejectUnauthorized: false }
+    });
+}
+
+const JWT_SECRET = process.env.JWT_SECRET || 'kodbank_super_secret_key_2024_secire';
 
 // CORS headers
 const headers = {
