@@ -40,15 +40,24 @@
         // Check if user is logged in on page load
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const response = await fetch('/api/balance', {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const response = await fetch('/.netlify/functions/balance', {
                     method: 'GET',
-                    credentials: 'include'
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
                 });
 
                 const data = await response.json();
 
                 if (!data.success) {
-                    // Token invalid or expired, redirect to login
+                    localStorage.removeItem('token');
                     window.location.href = '/login';
                 }
             } catch (error) {
@@ -59,10 +68,12 @@
         // Check Balance button click
         document.getElementById('checkBalanceBtn').addEventListener('click', async () => {
             try {
-                const response = await fetch('/api/balance', {
+                const token = localStorage.getItem('token');
+
+                const response = await fetch('/.netlify/functions/balance', {
                     method: 'GET',
-                    credentials: 'include',
                     headers: {
+                        'Authorization': 'Bearer ' + token,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -82,6 +93,7 @@
                 } else {
                     showMessage(data.message, 'error');
                     if (data.message.includes('expired') || data.message.includes('invalid')) {
+                        localStorage.removeItem('token');
                         setTimeout(() => {
                             window.location.href = '/login';
                         }, 2000);
@@ -95,10 +107,17 @@
         // Logout function
         async function logout() {
             try {
-                await fetch('/api/logout', {
-                    method: 'POST',
-                    credentials: 'include'
-                });
+                const token = localStorage.getItem('token');
+                if (token) {
+                    await fetch('/.netlify/functions/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+                localStorage.removeItem('token');
             } catch (error) {
                 console.error('Logout error:', error);
             }
